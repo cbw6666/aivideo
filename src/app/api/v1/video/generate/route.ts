@@ -22,6 +22,7 @@ const generateSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth(request);
+
     const body = await request.json();
     const data = generateSchema.parse(body);
 

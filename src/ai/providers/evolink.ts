@@ -7,6 +7,7 @@ import {
   getProviderModelId,
   transformParamsForProvider,
 } from "../model-mapping";
+import { ApiError } from "@/lib/api/error";
 
 export class EvolinkProvider implements AIVideoProvider {
   name = "evolink";
@@ -51,6 +52,9 @@ export class EvolinkProvider implements AIVideoProvider {
       } catch {
         // If parsing fails, use status text
         errorMessage = response.statusText || errorMessage;
+      }
+      if (errorMessage.toLowerCase().includes("insufficient") || errorMessage.toLowerCase().includes("quota")) {
+        throw new ApiError(`Insufficient credits: ${errorMessage}`, 402);
       }
       throw new Error(errorMessage);
     }

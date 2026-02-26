@@ -152,8 +152,10 @@ export class CreditService {
         0
       );
       if (availableCredits < credits) {
-        throw new Error(
-          `Insufficient credits. Required: ${credits}, Available: ${availableCredits}`
+        const { ApiError } = await import("@/lib/api/error");
+        throw new ApiError(
+          `Insufficient credits. Required: ${credits}, Available: ${availableCredits}`,
+          402
         );
       }
 

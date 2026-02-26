@@ -168,8 +168,23 @@ export function HeroSection() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error?.error?.message || "Failed to generate video");
+        let errorMsg = `HTTP ${response.status}`;
+        try {
+          const text = await response.text();
+          console.error(`[video/generate] Response ${response.status}:`, text.substring(0, 1000));
+          try {
+            const error = JSON.parse(text);
+            errorMsg = error?.error?.message || "Failed to generate video";
+            if (error?.error?.details) {
+              console.error("Server error details:", error.error.details);
+            }
+          } catch {
+            errorMsg = `Server error (${response.status})`;
+          }
+        } catch {
+          errorMsg = `Server error (${response.status})`;
+        }
+        throw new Error(errorMsg);
       }
 
       const result = await response.json();

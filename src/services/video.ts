@@ -7,6 +7,7 @@ import { getProvider, type ProviderType, type VideoTaskResponse } from "../ai";
 import { creditService } from "./credit";
 import { generateSignedCallbackUrl } from "@/ai/utils/callback-signature";
 import { emitVideoEvent } from "@/lib/video-events";
+import { ApiError } from "@/lib/api/error";
 
 export interface GenerateVideoParams {
   userId: string;
@@ -123,7 +124,7 @@ export class VideoService {
           updatedAt: new Date(),
         })
         .where(eq(videos.uuid, videoResult.uuid));
-      throw new Error(`Insufficient credits. Required: ${creditsRequired}`);
+      throw new ApiError(`Insufficient credits. Required: ${creditsRequired}`, 402);
     }
 
     // ✅ 支持通过环境变量选择 provider
